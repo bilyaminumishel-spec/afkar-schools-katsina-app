@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#075b35">
+<title>Afkar Schools Katsina - School Management System</title>
+<style>
+:root{--green:#075b35;--green2:#0b7545;--maroon:#6d1830;--bg:#f4f6f5;--white:#fff;--text:#17231d;--muted:#68756e;--line:#dfe7e2}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(135deg,var(--green),var(--maroon));color:#fff;padding:18px 14px;text-align:center}
+header h1{margin:0;font-size:22px}header p{margin:5px 0 0;font-size:13px}
+nav{display:flex;gap:6px;overflow:auto;background:#fff;padding:8px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav button{border:0;background:#edf3ef;color:var(--green);padding:10px 13px;border-radius:9px;white-space:nowrap;font-weight:bold}
+nav button.active{background:var(--green);color:#fff}
+main{max-width:1100px;margin:auto;padding:14px}.page{display:none}.page.active{display:block}
+.card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px;margin-bottom:14px;box-shadow:0 2px 8px #00000008}
+h2{margin:0 0 12px;color:var(--green);font-size:19px}h3{color:var(--maroon)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+input,select,textarea{width:100%;padding:10px;border:1px solid #ccd8d1;border-radius:8px;font-size:14px;background:#fff}
+label{font-size:12px;font-weight:bold;color:#506057;display:block;margin:5px 0}
+button,.btn{border:0;border-radius:8px;padding:10px 13px;background:var(--green);color:#fff;font-weight:bold;cursor:pointer}
+.btn.maroon{background:var(--maroon)}button.secondary{background:#e9efeb;color:var(--green)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:9px;text-align:left}th{background:#f0f5f2;color:var(--green)}
+.tablewrap{overflow:auto}.stat{padding:15px;border-radius:12px;background:#fff;border-left:5px solid var(--green);box-shadow:0 2px 8px #00000008}.stat b{font-size:25px;display:block;color:var(--green)}
+.notice{padding:10px;background:#fff7e6;border-left:4px solid #d49a20;margin:7px 0;border-radius:7px}
+.small{font-size:12px;color:var(--muted)}
+.hidden{display:none!important}
+@media(max-width:600px){header h1{font-size:18px}main{padding:9px}.card{padding:12px}}
+@media print{
+nav,header .no-print,.actions,.no-print{display:none!important}.page{display:none}.page.active{display:block}
+body{background:#fff}.card{box-shadow:none;border:0}table{font-size:11px}
+}
+</style>
+</head>
+<body>
+<header>
+<h1>AFKAR SCHOOLS KATSINA</h1>
+<p>Knowledge & Faith • School Management System</p>
+</header>
+
+<nav id="nav">
+<button class="active" onclick="showPage('dashboard',this)">Dashboard</button>
+<button onclick="showPage('students',this)">Students</button>
+<button onclick="showPage('results',this)">Results</button>
+<button onclick="showPage('report',this)">Report Card</button>
+<button onclick="showPage('fees',this)">School Fees</button>
+<button onclick="showPage('attendance',this)">Attendance</button>
+<button onclick="showPage('classes',this)">Classes</button>
+<button onclick="showPage('staff',this)">Staff</button>
+<button onclick="showPage('notices',this)">Notices</button>
+</nav>
+
+<main>
+<section id="dashboard" class="page active">
+<div class="card"><h2>School Dashboard</h2><p class="small">Manage students, results, fees, attendance and printable documents from your phone.</p></div>
+<div class="grid">
+<div class="stat">Students<b id="studentCount">0</b></div>
+<div class="stat">Results<b id="resultCount">0</b></div>
+<div class="stat">Payments<b id="paymentCount">0</b></div>
+<div class="stat">Notices<b id="noticeCount">0</b></div>
+</div>
+</section>
+
+<section id="students" class="page">
+<div class="card"><h2>Add Student</h2>
+<div class="grid">
+<div><label>Student Full Name</label><input id="studentName" placeholder="e.g. Aisha Musa"></div>
+<div><label>Class</label><select id="studentClass"></select></div>
+<div><label>Admission Number</label><input id="studentAdm" placeholder="AFK/2026/001"></div>
+<div><label>Gender</label><select id="studentGender"><option>Male</option><option>Female</option></select></div>
+</div><div class="actions"><button onclick="addStudent()">Save Student</button></div></div>
+<div class="card"><h2>Students List</h2><div class="tablewrap"><table><thead><tr><th>Name</th><th>Class</th><th>Admission No.</th><th>Gender</th><th>Action</th></tr></thead><tbody id="studentTable"></tbody></table></div></div>
+</section>
+
+<section id="results" class="page">
+<div class="card"><h2>Result Compiler</h2>
+<div class="grid">
+<div><label>Student</label><select id="resultStudent"></select></div>
+<div><label>Subject</label><input id="resultSubject" placeholder="Mathematics"></div>
+<div><label>CA (0-40)</label><input id="resultCA" type="number" min="0" max="40"></div>
+<div><label>Exam (0-60)</label><input id="resultExam" type="number" min="0" max="60"></div>
+</div><div class="actions"><button onclick="saveResult()">Compile & Save Result</button></div>
+<p class="small">Grade is calculated automatically: A=70–100, B=60–69, C=50–59, D=45–49, E=40–44, F=0–39.</p>
+</div>
+<div class="card"><h2>Saved Results</h2><div class="tablewrap"><table><thead><tr><th>Student</th><th>Subject</th><th>Total</th><th>Grade</th><th>Action</th></tr></thead><tbody id="resultTable"></tbody></table></div></div>
+</section>
+
+<section id="report" class="page">
+<div class="card"><h2>Report Card</h2>
+<div class="grid"><div><label>Select Student</label><select id="reportStudent" onchange="renderReport()"></select></div><div><label>Session</label><input id="reportSession" value="2025/2026"></div><div><label>Term</label><select id="reportTerm"><option>First Term</option><option>Second Term</option><option>Third Term</option></select></div></div>
+<div id="reportArea" class="card hidden"></div>
+<div class="actions"><button onclick="printReport()">Print / Save Report Card</button></div>
+</div>
+</section>
+
+<section id="fees" class="page">
+<div class="card"><h2>School Fees & Payments</h2>
+<div class="grid">
+<div><label>Student</label><select id="feeStudent"></select></div>
+<div><label>Amount Paid (₦)</label><input id="feeAmount" type="number"></div>
+<div><label>Payment Type</label><select id="feeType"><option>School Fees</option><option>Tuition</option><option>Other</option></select></div>
+<div><label>Payment Date</label><input id="feeDate" type="date"></div>
+</div><div class="actions"><button onclick="savePayment()">Save Payment & Generate Receipt</button></div></div>
+<div class="card"><h2>Payment History</h2><div class="tablewrap"><table><thead><tr><th>Student</th><th>Amount</th><th>Type</th><th>Date</th><th>Receipt</th></tr></thead><tbody id="feeTable"></tbody></table></div></div>
+</section>
+
+<section id="attendance" class="page">
+<div class="card"><h2>Attendance</h2>
+<div class="grid"><div><label>Date</label><input id="attDate" type="date"></div><div><label>Student</label><select id="attStudent"></select></div><div><label>Status</label><select id="attStatus"><option>Present</option><option>Absent</option><option>Late</option></select></div></div>
+<div class="actions"><button onclick="saveAttendance()">Save Attendance</button></div></div>
+<div class="card"><h2>Attendance Records</h2><div class="tablewrap"><table><thead><tr><th>Date</th><th>Student</th><th>Status</th></tr></thead><tbody id="attTable"></tbody></table></div></div>
+</section>
+
+<section id="classes" class="page">
+<div class="card"><h2>School Classes</h2>
+<div class="grid"><div><label>New Class</label><input id="className" placeholder="Primary 1"></div></div>
+<div class="actions"><button onclick="addClass()">Add Class</button></div></div>
+<div class="card"><div class="tablewrap"><table><thead><tr><th>Class</th><th>Action</th></tr></thead><tbody id="classTable"></tbody></table></div></div>
+</section>
+
+<section id="staff" class="page">
+<div class="card"><h2>Staff Management</h2>
+<div class="grid"><div><label>Staff Name</label><input id="staffName"></div><div><label>Role</label><input id="staffRole" placeholder="Teacher"></div><div><label>Phone</label><input id="staffPhone"></div></div>
+<div class="actions"><button onclick="addStaff()">Save Staff</button></div></div>
+<div class="card"><div class="tablewrap"><table><thead><tr><th>Name</th><th>Role</th><th>Phone</th><th>Action</th></tr></thead><tbody id="staffTable"></tbody></table></div></div>
+</section>
+
+<section id="notices" class="page">
+<div class="card"><h2>School Notices</h2><label>Notice</label><textarea id="noticeText" rows="3" placeholder="Enter school announcement"></textarea>
+<div class="actions"><button onclick="addNotice()">Publish Notice</button></div></div>
+<div class="card"><div id="noticeList"></div></div>
+</section>
+</main>
+
+<script>
+const key='afkar_school_v2';
+let db=JSON.parse(localStorage.getItem(key)||'null')||{
+students:[],results:[],payments:[],attendance:[],
+classes:['Nursery 1','Nursery 2','Nursery 3','Primary 1','Primary 2','Primary 3','Primary 4','Primary 5','JSS 1','JSS 2','JSS 3'],
+staff:[],notices:[]
+};
+function save(){localStorage.setItem(key,JSON.stringify(db));refresh()}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function showPage(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');refresh()}
+function grade(n){return n>=70?'A':n>=60?'B':n>=50?'C':n>=45?'D':n>=40?'E':'F'}
+function studentName(id){let s=db.students.find(x=>x.id==id);return s?s.name:'Unknown'}
+function addStudent(){let name=studentName.value.trim(),cl=studentClass.value,adm=studentAdm.value.trim(),gender=studentGender.value;if(!name||!cl){alert('Enter student name and class.');return}db.students.push({id:Date.now(),name,cl,adm,gender});studentName.value='';studentAdm.value='';save();alert('Student saved.')}
+function delStudent(id){if(confirm('Delete this student?')){db.students=db.students.filter(x=>x.id!=id);save()}}
+function saveResult(){let sid=resultStudent.value,subject=resultSubject.value.trim(),ca=+resultCA.value||0,exam=+resultExam.value||0;if(!sid||!subject){alert('Select a student and enter subject.');return}if(ca>40||exam>60){alert('CA must be 0-40 and Exam 0-60.');return}let total=ca+exam;db.results.push({id:Date.now(),sid,subject,ca,exam,total,grade:grade(total)});resultSubject.value='';resultCA.value='';resultExam.value='';save();alert('Result compiled and saved.')}
+function delResult(id){if(confirm('Delete this result?')){db.results=db.results.filter(x=>x.id!=id);save()}}
+function savePayment(){let sid=feeStudent.value,amount=+feeAmount.value||0,type=feeType.value,date=feeDate.value||new Date().toISOString().slice(0,10);if(!sid||amount<=0){alert('Select student and enter amount.');return}let p={id:Date.now(),sid,amount,type,date};db.payments.push(p);save();printReceipt(p.id)}
+function printReceipt(id){let p=db.payments.find(x=>x.id==id);if(!p)return;let s=db.students.find(x=>x.id==p.sid);let w=window.open('','_blank');w.document.write(`<html><head><title>Receipt</title><style>body{font-family:Arial;padding:30px}h1{color:#075b35;text-align:center}.box{border:1px solid #ddd;padding:20px;max-width:600px;margin:auto}</style></head><body><div class="box"><h1>AFKAR SCHOOLS KATSINA</h1><h2>PAYMENT RECEIPT</h2><p><b>Receipt No:</b> ${p.id}</p><p><b>Student:</b> ${esc(s?.name)}</p><p><b>Admission No:</b> ${esc(s?.adm)}</p><p><b>Payment:</b> ${esc(p.type)}</p><p><b>Amount Paid:</b> ₦${Number(p.amount).toLocaleString()}</p><p><b>Date:</b> ${esc(p.date)}</p><br><p>Authorized Signature: __________________</p><button onclick="print()">Print / Save PDF</button></div></body></html>`);w.document.close()}
+function saveAttendance(){let sid=attStudent.value,date=attDate.value||new Date().toISOString().slice(0,10),status=attStatus.value;if(!sid){alert('Select student.');return}db.attendance.push({sid,date,status});save();alert('Attendance saved.')}
+function addClass(){let n=className.value.trim();if(!n)return;if(!db.classes.includes(n))db.classes.push(n);className.value='';save()}
+function delClass(c){if(confirm('Remove this class?')){db.classes=db.classes.filter(x=>x!==c);save()}}
+function addStaff(){let name=staffName.value.trim(),role=staffRole.value.trim(),phone=staffPhone.value.trim();if(!name)return;db.staff.push({id:Date.now(),name,role,phone});staffName.value='';staffRole.value='';staffPhone.value='';save()}
+function delStaff(id){db.staff=db.staff.filter(x=>x.id!=id);save()}
+function addNotice(){let text=noticeText.value.trim();if(!text)return;db.notices.push({id:Date.now(),text,date:new Date().toLocaleString()});noticeText.value='';save()}
+function delNotice(id){db.notices=db.notices.filter(x=>x.id!=id);save()}
+function fillSelect(id,placeholder=true){let el=document.getElementById(id);if(!el)return;let old=el.value;el.innerHTML=(placeholder?'<option value="">Select student</option>':'')+db.students.map(s=>`<option value="${s.id}">${esc(s.name)} — ${esc(s.cl)}</option>`).join('');if([...el.options].some(o=>o.value==old))el.value=old}
+function renderReport(){let sid=reportStudent.value,area=reportArea;if(!sid){area.classList.add('hidden');return}let s=db.students.find(x=>x.id==sid),rs=db.results.filter(x=>x.sid==sid);area.classList.remove('hidden');area.innerHTML=`<div style="text-align:center"><h2>AFKAR SCHOOLS KATSINA</h2><p><b>STUDENT REPORT CARD</b></p></div><p><b>Name:</b> ${esc(s.name)} &nbsp; <b>Class:</b> ${esc(s.cl)} &nbsp; <b>Admission No:</b> ${esc(s.adm)}</p><p><b>Session:</b> ${esc(reportSession.value)} &nbsp; <b>Term:</b> ${esc(reportTerm.value)}</p><table><thead><tr><th>Subject</th><th>CA</th><th>Exam</th><th>Total</th><th>Grade</th></tr></thead><tbody>${rs.map(r=>`<tr><td>${esc(r.subject)}</td><td>${r.ca}</td><td>${r.exam}</td><td>${r.total}</td><td>${r.grade}</td></tr>`).join('')}</tbody></table><p><b>Number of Subjects:</b> ${rs.length}</p><p>Class Teacher: ____________________ &nbsp;&nbsp; Principal: ____________________</p>`}
+function printReport(){renderReport();if(!reportStudent.value){alert('Select a student first.');return}let html=reportArea.innerHTML;let w=window.open('','_blank');w.document.write(`<html><head><title>Report Card</title><style>body{font-family:Arial;padding:25px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #999;padding:8px}th{background:#eee}</style></head><body>${html}<br><button onclick="print()">Print / Save PDF</button></body></html>`);w.document.close()}
+function refresh(){
+document.getElementById('studentCount').textContent=db.students.length;document.getElementById('resultCount').textContent=db.results.length;document.getElementById('paymentCount').textContent=db.payments.length;document.getElementById('noticeCount').textContent=db.notices.length;
+studentClass.innerHTML=db.classes.map(c=>`<option>${esc(c)}</option>`).join('');
+['resultStudent','reportStudent','feeStudent','attStudent'].forEach(id=>fillSelect(id));
+studentTable.innerHTML=db.students.map(s=>`<tr><td>${esc(s.name)}</td><td>${esc(s.cl)}</td><td>${esc(s.adm)}</td><td>${esc(s.gender)}</td><td><button class="btn maroon" onclick="delStudent(${s.id})">Delete</button></td></tr>`).join('');
+resultTable.innerHTML=db.results.map(r=>`<tr><td>${esc(studentName(r.sid))}</td><td>${esc(r.subject)}</td><td>${r.total}</td><td><b>${r.grade}</b></td><td><button class="btn maroon" onclick="delResult(${r.id})">Delete</button></td></tr>`).join('');
+feeTable.innerHTML=db.payments.map(p=>`<tr><td>${esc(studentName(p.sid))}</td><td>₦${p.amount.toLocaleString()}</td><td>${esc(p.type)}</td><td>${esc(p.date)}</td><td><button onclick="printReceipt(${p.id})">Receipt</button></td></tr>`).join('');
+attTable.innerHTML=db.attendance.slice().reverse().map(a=>`<tr><td>${esc(a.date)}</td><td>${esc(studentName(a.sid))}</td><td>${esc(a.status)}</td></tr>`).join('');
+classTable.innerHTML=db.classes.map(c=>`<tr><td>${esc(c)}</td><td><button class="btn maroon" onclick="delClass('${esc(c).replace(/'/g,"\\'")}')">Remove</button></td></tr>`).join('');
+staffTable.innerHTML=db.staff.map(s=>`<tr><td>${esc(s.name)}</td><td>${esc(s.role)}</td><td>${esc(s.phone)}</td><td><button class="btn maroon" onclick="delStaff(${s.id})">Delete</button></td></tr>`).join('');
+noticeList.innerHTML=db.notices.slice().reverse().map(n=>`<div class="notice"><b>${esc(n.date)}</b><br>${esc(n.text)}<br><button class="btn maroon" onclick="delNotice(${n.id})">Delete</button></div>`).join('');
+renderReport();
+}
+attDate.value=new Date().toISOString().slice(0,10);feeDate.value=new Date().toISOString().slice(0,10);
+refresh();
+</script>
+</body>
+</html>
